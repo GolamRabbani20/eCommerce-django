@@ -1,0 +1,139 @@
+{% extends "common/base.html" %}
+{% load static%}
+
+{% block content%}
+    <!-- Header-->
+    <header class="bg-dark py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="text-center text-white">
+                <h1 class="display-4 fw-bolder">Card Summery</h1>
+                <p class="lead fw-normal text-white-50 mb-0">2000 takar besi kenakata korleii paben 20% discount, Hurry up!</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="container"><br>
+        {% if card_products%}
+            {% for product in card_products%}
+                <div class="card mb-3">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img src="{{product.image.url}}" class="img-fluid rounded-start" alt="...">
+                        </div>
+                        <div class="col-md-8">
+                            <center>
+                                <div class="card-body">
+                                    <h5 class="card-title">{{product.name}}</h5>
+                                    <!-- Product reviews-->
+                                    <div class="d-flex justify-content-center small text-warning mb-2">
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                    </div>
+                                    <p class="card-text">{{product.description}}</p>
+                                    {% if product.is_sale%}
+                                        <div class="d-flex justify-content-center small text-warning mb-2">
+                                            <div class="bi-star-fill"></div>
+                                                &nbsp;&nbsp;Sold&nbsp;&nbsp;
+                                            <div class="bi-star-fill"></div>
+                                        </div>
+                                        <!-- Product price-->
+                                        $ <strike>{{product.price}}</strike>
+                                        &nbsp;
+                                        {{product.sale_price}}
+                                    {% else%}
+                                        $ {{product.price}}
+                                        <br><br>
+                                    {% endif%}
+                                    <div class="row justify-content-center">
+                                        <div class="col-md-2">Quantity:</div>
+                                        <div class="col-md-2">
+                                            <select class="form-select form-select-sm" id="select{{product.id}}">
+
+                                                {% for key, value in quantities.items %}
+                                                    {% if key == product.id|slugify %}
+                                                        <option selected>{{value}}</option>
+                                                    {% endif%}
+                                                {% endfor%}
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="3">4</option>
+                                                <option value="3">5</option>
+                                                
+                                            </select>
+                                        </div>
+                                    </div><br>
+                                    <a class="btn btn-secondary" href="{% url 'home'%}">Back</a>
+                                    <button class="btn btn-secondary update-card" type="button", data-index="{{product.id}}">Update</button>
+                                    <button class="btn btn-danger delete-card" type="button", data-index="{{product.id}}">Remove</button>
+                                </div>
+                            </center>
+                        </div>
+                    </div>
+                </div><br>
+            {% endfor%}
+            <div class="container shadow p-3 mb-5 bg-body-tertiary rounded">
+                <h4>Total Qty: {{totals.total_product}} Pis</h4>
+                <h4>Total Price: {{totals.total_price}} BDT</h4>
+                {% if totals.discount%}
+                    <h4>Discount: {{totals.discount}} BDT</h4>
+                    <h4>Discount Price: {{totals.discount_price}} BDT</h4>
+                {% endif%}
+            </div>
+        {% else%} 
+        <center><h5 style="color:red">Sorry! There is nothing to your card......</h5></center>
+        {% endif%}
+    </div>
+    <br><br><br><br><br><br><br><br><br>
+   
+    <script>
+        //For Updating Card
+        $(document).on('click', '.update-card', function(e){
+            e.preventDefault();
+            //grab the product id
+            var productid = $(this).data('index');
+            $.ajax({
+                type: 'POST',
+                url: '{% url 'card_update' %}',
+                data: {
+                    product_id: $(this).data('index'),
+                    product_qty: $('#select' + productid + ' option:selected').text(),
+                    csrfmiddlewaretoken:'{{ csrf_token }}',
+                    action: 'post'
+                },
+                success: function(json){
+                    //console.log(json)
+                    //document.getElementById("card_quantity").textContent = json.qty
+                    location.reload();
+                },
+                error: function(xhr, errmsg, err){
+
+                }
+            });
+        })
+
+        //For Deleting Card
+        $(document).on('click', '.delete-card', function(e){
+            e.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: '{% url 'card_delete' %}',
+                data: {
+                    product_id: $(this).data('index'),
+                    csrfmiddlewaretoken:'{{ csrf_token }}',
+                    action: 'post'
+                },
+                success: function(json){
+                    location.reload();
+                },
+                error: function(xhr, errmsg, err){
+
+                }
+            });
+        })
+    </script>
+{% endblock content%}
+

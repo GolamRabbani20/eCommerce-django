@@ -1,0 +1,44 @@
+{% extends 'common/base.html'%}
+{% load static%}
+
+{% block content%}
+    <!-- Header-->
+    <header class="bg-dark py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="text-center text-white">
+                <h1 class="display-4 fw-bolder">Categories...</h1>
+                <p class="lead fw-normal text-white-50 mb-0">Learn more about our company!</p>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+            <div class="row">
+                <center>
+                    <div class="col-8"><br><br>
+                       
+                        <table class="table table-success table-striped table-hover table-bordered">
+                            <thead>
+                            <tr>
+                                <th scope="col">Category ID</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">View</th>
+                            </tr>
+                            </thead>
+                            {% for category in categories%}
+                            <tbody>
+                            <tr>
+                                <th scope="row">{{category.id}}</th>
+                                <td>{{category}}</td>
+                                <td align='right'>
+                                    <a href="{% url 'categorical_product' category %}" > Show </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                            {% endfor%}
+                        </table>
+                    </div>
+                </center>
+            </div>
+    </div>
+    <br><br><br><br><br><br><br><br><br><br><br><br>
+{% endblock content%}

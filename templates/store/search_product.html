@@ -1,0 +1,99 @@
+{% extends 'common/base.html'%}
+{% load static%}
+{% block title%}Search Product{% endblock title%}
+
+{% block content%}
+    <!-- Header-->
+    <header class="bg-dark py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="text-center text-white">
+                <h1 class="display-4 fw-bolder">Search Product</h1>
+                <p class="lead fw-normal text-white-50 mb-0">Search your product here</p>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+        <br>
+        <div class="card">
+            <div class="card-header"><center>Search Product</center></div>
+            <div class="card-body">
+                <form method='POST', action="{% url 'search_product'%}">
+                    {% csrf_token %}
+                    <div class="form-group d-flex justify-content-evenly">
+                      <input type="text" class="form-control"  aria-describedby="emailHelp" placeholder="Search products" name='searched'>
+                      &nbsp;&nbsp; <button type="submit" class="btn btn-secondary">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <br><br>
+        {% if searched %}
+            {% for product in searched%}
+                <div class="card mb-3" >
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img src="{{product.image.url}}" class="img-fluid rounded-start" alt="...">
+                        </div>
+                        <div class="col-md-8">
+                            <center>
+                                <div class="card-body">
+                                    <h5 class="card-title">{{product.name}}</h5>
+                                    <!-- Product reviews-->
+                                    <div class="d-flex justify-content-center small text-warning mb-2">
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                    </div>
+                                    <p class="card-text">{{product.description}}</p>
+                                    {% if product.is_sale%}
+                                        <div class="d-flex justify-content-center small text-warning mb-2">
+                                            <div class="bi-star-fill"></div>
+                                                &nbsp;&nbsp;Sold&nbsp;&nbsp;
+                                            <div class="bi-star-fill"></div>
+                                        </div>
+                                        <!-- Product price-->
+                                        $ <strike>{{product.price}}</strike>
+                                        &nbsp;
+                                        {{product.sale_price}}
+                                    {% else%}
+                                        <p>$ {{product.price}}</p>
+                                    {% endif%}
+                                    <a class="btn btn-secondary" href="{% url 'home'%}">Back To Home</a>&nbsp;&nbsp;
+                                    <a class="btn btn-secondary" href="{% url 'view_product' product.id %}">Show Details</a>&nbsp;&nbsp;
+                                    
+                                </div>
+                            </center>
+                        </div>
+                    </div>
+                </div>
+            {% endfor%}
+        {% endif%}
+    </div>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+    <script>
+        $(document).on('click', '#card-add', function(e){
+            e.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: '{% url 'card_add' %}',
+                data: {
+                    product_id: $('#card-add').val(),
+                    product_qty: $('#qty-card option:selected').text(),
+                    csrfmiddlewaretoken:'{{ csrf_token }}',
+                    action: 'post'
+                },
+                success: function(json){
+                    //console.log(json)
+                    document.getElementById("card_quantity").textContent = json.qty
+                    location.reload();
+                },
+                error: function(xhr, errmsg, err){
+
+                }
+            });
+        })
+    </script>
+{% endblock content%}

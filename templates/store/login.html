@@ -1,0 +1,33 @@
+{% extends 'common/base.html'%}
+{% load static%}
+
+{% block content%}
+    <!-- Header-->
+    <header class="bg-dark py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="text-center text-white">
+                <h1 class="display-4 fw-bolder">Login</h1>
+                <p class="lead fw-normal text-white-50 mb-0">welcome to Fruits Ecommerce Login page!</p>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+        <div class="row">
+            <center>
+                <div class="col-6"><br><br>
+                    <form method="POST" action="{% url 'login_user'%}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="username" aria-describedby="emailHelp" placeholder="Enter username">
+                        </div><br>
+                        <div class="form-group">
+                            <input type="password" class="form-control" name="password" placeholder="Password">
+                        </div><br>
+                        <button type="submit" class="btn btn-secondary">Login</button>
+                    </form><br><br>
+                </div>
+            </center>
+        </div>
+    </div>
+    <br><br><br><br><br><br><br><br>
+{% endblock content%}
